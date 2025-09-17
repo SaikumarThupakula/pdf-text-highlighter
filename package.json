@@ -46,13 +46,7 @@
     "pdfjs-dist": "^4.4.168",
     "react-rnd": "^10.4.11"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DanielArnould/react-pdf-highlighter.git"
-  },
-  "bugs": {
-    "url": "https://github.com/DanielArnould/react-pdf-highlighter-extended/issues"
-  },
+ 
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20.14.9",
