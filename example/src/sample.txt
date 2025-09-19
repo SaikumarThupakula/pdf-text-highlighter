@@ -1,0 +1,95 @@
+// Your highlight object properly formatted for the application
+
+const yourHighlight = {
+  content: {
+    text: "Section I: If the mother's life is endangered, the physician must complete the following: In my professional opinion, the recipient suffers from a physical disorder, physical injury, or physical illness (or life endangering physical condition caused by or arising from the pregnancy itself) that would place the recipient in danger of death unless an abortion is performed. The life endangering condition is: (Attach additional sheets as necessary.) Section II: If the pregnancy resulted from rape or incest, the following must be completed by the member (or legal representative) and physician:"
+  },
+  type: "text",
+  position: {
+    boundingRect: {
+      x1: 34.6875,
+      y1: 376.171875,
+      x2: 974.58203125,
+      y2: 666.71875,
+      width: 1010,
+      height: 1307.0588235294117,
+      pageNumber: 1,
+    },
+    rects: [
+      {
+        x1: 34.6875,
+        y1: 376.171875,
+        x2: 797.46875,
+        y2: 398.171875,
+        width: 1010,
+        height: 1307.0588235294117,
+        pageNumber: 1,
+      },
+      {
+        x1: 34.6875,
+        y1: 400.96875,
+        x2: 970.841552734375,
+        y2: 422.96875,
+        width: 1010,
+        height: 1307.0588235294117,
+        pageNumber: 1,
+      },
+      {
+        x1: 34.6875,
+        y1: 425.71875,
+        x2: 974.58203125,
+        y2: 447.71875,
+        width: 1010,
+        height: 1307.0588235294117,
+        pageNumber: 1,
+      },
+      {
+        x1: 34.6875,
+        y1: 450.515625,
+        x2: 657.71875,
+        y2: 472.515625,
+        width: 1010,
+        height: 1307.0588235294117,
+        pageNumber: 1,
+      },
+      {
+        x1: 34.6875,
+        y1: 476.25,
+        x2: 354.46875,
+        y2: 498.25,
+        width: 1010,
+        height: 1307.0588235294117,
+        pageNumber: 1,
+      },
+      {
+        x1: 34.6875,
+        y1: 619.96875,
+        x2: 948.441162109375,
+        y2: 641.96875,
+        width: 1010,
+        height: 1307.0588235294117,
+        pageNumber: 1,
+      },
+      {
+        x1: 34.6875,
+        y1: 644.71875,
+        x2: 376.98358154296875,
+        y2: 666.71875,
+        width: 1010,
+        height: 1307.0588235294117,
+        pageNumber: 1,
+      },
+    ],
+  },
+  comment: "Medical Document Sections I & II",
+  id: "medical-sections-1-2",
+};
+
+// To use this highlight in your app, add it to an array:
+const myHighlights = [yourHighlight];
+
+// Then set it in your app state:
+// setHighlights(myHighlights);
+
+// Or to add this highlight to existing highlights:
+// setHighlights([...highlights, yourHighlight]);
