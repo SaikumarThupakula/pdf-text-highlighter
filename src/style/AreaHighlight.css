@@ -1,10 +1,114 @@
 .AreaHighlight__part {
   cursor: pointer;
   position: absolute;
-  background: rgba(255, 226, 143, 1);
+  background: rgba(255, 226, 143, 0.3); /* Default yellow highlight for test highlights */
+  border: 1px solid #ffc107;
+  border-radius: 3px;
   transition: background 0.3s;
+}
+
+.AreaHighlight__part:hover {
+  background: rgba(255, 226, 143, 0.5); /* Darker yellow on hover */
+}
+
+.AreaHighlight--extracted-text .AreaHighlight__part {
+  background: rgba(255, 0, 0, 0.3);
+  border: 1px solid #dc3545;
+}
+
+.AreaHighlight--extracted-text .AreaHighlight__part:hover {
+  background: rgba(255, 0, 0, 0.5);
+}
+
+.AreaHighlight--ict-code .AreaHighlight__part {
+  background: rgba(0, 123, 255, 0.3);
+  border: 1px solid #007bff;
+}
+
+.AreaHighlight--ict-code .AreaHighlight__part:hover {
+  background: rgba(0, 123, 255, 0.5);
+}
+
+.AreaHighlight--extracted-code .AreaHighlight__part {
+  background: rgba(0, 102, 204, 0.3);
+  border: 1px solid #0066cc;
+}
+
+.AreaHighlight--extracted-code .AreaHighlight__part:hover {
+  background: rgba(0, 102, 204, 0.5);
+}
+
+.AreaHighlight--text\+code .AreaHighlight__part {
+  background: rgba(128, 128, 128, 0.3);
+  border: 1px solid #808080;
+}
+
+.AreaHighlight--text\+code .AreaHighlight__part:hover {
+  background: rgba(128, 128, 128, 0.5);
+}
+
+/* Text+code group subType-specific colors */
+.AreaHighlight--text\+code.AreaHighlight--content .AreaHighlight__part {
+  background: rgba(255, 0, 0, 0.3);
+  border: 1px solid #dc3545;
+}
+
+.AreaHighlight--text\+code.AreaHighlight--content .AreaHighlight__part:hover {
+  background: rgba(255, 0, 0, 0.5);
+}
+
+.AreaHighlight--text\+code.AreaHighlight--implementation .AreaHighlight__part {
+  background: rgba(0, 102, 204, 0.3);
+  border: 1px solid #0066cc;
+}
+
+.AreaHighlight--text\+code.AreaHighlight--implementation .AreaHighlight__part:hover {
+  background: rgba(0, 102, 204, 0.5);
 }
 
 .AreaHighlight--scrolledTo .AreaHighlight__part {
   background: #ff4141;
+}
+
+/* Category-specific scrolledTo colors */
+.AreaHighlight--scrolledTo.AreaHighlight--extracted-text .AreaHighlight__part {
+  background: #ff4141;
+  border: 1px solid #dc3545;
+}
+
+.AreaHighlight--scrolledTo.AreaHighlight--ict-code .AreaHighlight__part {
+  background: #0066cc;
+  border: 1px solid #0066cc;
+}
+
+.AreaHighlight--scrolledTo.AreaHighlight--extracted-code .AreaHighlight__part {
+  background: #004499;
+  border: 1px solid #004499;
+}
+
+.AreaHighlight--scrolledTo.AreaHighlight--text\+code .AreaHighlight__part {
+  background: #808080;
+  border: 1px solid #808080;
+}
+
+.AreaHighlight--scrolledTo.AreaHighlight--text\+code.AreaHighlight--content .AreaHighlight__part {
+  background: #ff0000;
+  border: 1px solid #dc3545;
+}
+
+.AreaHighlight--scrolledTo.AreaHighlight--text\+code.AreaHighlight--implementation .AreaHighlight__part {
+  background: #0066cc;
+  border: 1px solid #0066cc;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 16px rgba(255, 65, 65, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(255, 65, 65, 0.6);
+  }
+  100% {
+    box-shadow: 0 4px 16px rgba(255, 65, 65, 0.4);
+  }
 }

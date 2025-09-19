@@ -1,0 +1,244 @@
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import type { Highlight, HighlightCategory, ScaledPosition } from "../types";
+
+/**
+ * Interface for extracted text data
+ */
+export interface ExtractedText {
+  id: string;
+  text: string;
+  position: ScaledPosition;
+}
+
+/**
+ * Interface for ICT code data
+ */
+export interface ICTCode {
+  id: string;
+  code: string;
+  description: string;
+  position?: ScaledPosition; // Position in PDF if found
+}
+
+/**
+ * Interface for codes data (similar to extracted text but different category)
+ */
+export interface Code {
+  id: string;
+  text: string;
+  position: ScaledPosition;
+}
+
+/**
+ * Interface for default text that can be highlighted
+ */
+export interface DefaultText {
+  id: string;
+  text: string;
+  position: ScaledPosition;
+}
+
+/**
+ * Highlight mode - determines which highlights are visible
+ */
+export type HighlightMode = "none" | "extracted-text" | "ict-code" | "codes" | "default-text";
+
+/**
+ * Hook for managing toggle-based highlighting system with visibility fixes
+ */
+export const useToggleHighlighting = (
+  extractedTexts: ExtractedText[] = [],
+  ictCodes: ICTCode[] = [],
+  codes: Code[] = [],
+  defaultTexts: DefaultText[] = []
+) => {
+  const [highlightMode, setHighlightMode] = useState<HighlightMode>("none");
+  const [selectedDefaultTextId, setSelectedDefaultTextId] = useState<string | null>(null);
+  const [forceUpdate, setForceUpdate] = useState(0);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  // Force re-render to fix visibility issues
+  const triggerUpdate = useCallback(() => {
+    setForceUpdate(prev => prev + 1);
+  }, []);
+
+  // Create highlights for extracted texts
+  const extractedTextHighlights = useMemo((): Highlight[] => {
+    return extractedTexts.map((text) => ({
+      id: `extracted-${text.id}`,
+      type: "text" as const,
+      category: "extracted-text" as const,
+      content: { text: text.text },
+      position: text.position,
+    }));
+  }, [extractedTexts, forceUpdate]); // Include forceUpdate to trigger re-render
+
+  // Create highlights for ICT codes (only those with positions)
+  const ictCodeHighlights = useMemo((): Highlight[] => {
+    return ictCodes
+      .filter(code => code.position) // Only codes found in PDF
+      .map((code) => ({
+        id: `ict-${code.id}`,
+        type: "text" as const,
+        category: "ict-code" as const,
+        content: { text: code.code },
+        position: code.position!,
+      }));
+  }, [ictCodes, forceUpdate]); // Include forceUpdate to trigger re-render
+
+  // Create highlights for codes
+  const codesHighlights = useMemo((): Highlight[] => {
+    return codes.map((code) => ({
+      id: `codes-${code.id}`,
+      type: "text" as const,
+      category: "codes" as const,
+      content: { text: code.text },
+      position: code.position,
+    }));
+  }, [codes, forceUpdate]); // Include forceUpdate to trigger re-render
+
+  // Create highlight for selected default text
+  const defaultTextHighlight = useMemo((): Highlight[] => {
+    if (!selectedDefaultTextId) return [];
+    
+    const selectedText = defaultTexts.find(text => text.id === selectedDefaultTextId);
+    if (!selectedText) return [];
+
+    return [{
+      id: `default-${selectedText.id}`,
+      type: "text" as const,
+      content: { text: selectedText.text },
+      position: selectedText.position,
+    }];
+  }, [defaultTexts, selectedDefaultTextId, forceUpdate]); // Include forceUpdate to trigger re-render
+
+  // Get current highlights based on mode
+  const currentHighlights = useMemo((): Highlight[] => {
+    switch (highlightMode) {
+      case "extracted-text":
+        return extractedTextHighlights;
+      case "ict-code":
+        return ictCodeHighlights;
+      case "codes":
+        return codesHighlights;
+      case "default-text":
+        return defaultTextHighlight;
+      case "none":
+      default:
+        return [];
+    }
+  }, [highlightMode, extractedTextHighlights, ictCodeHighlights, codesHighlights, defaultTextHighlight]);
+
+  // Delayed update to fix rendering issues
+  const scheduleUpdate = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      triggerUpdate();
+    }, 100); // Small delay to ensure PDF is rendered
+  }, [triggerUpdate]);
+
+  // Toggle extracted text highlights
+  const toggleExtractedText = useCallback(() => {
+    const newMode = highlightMode === "extracted-text" ? "none" : "extracted-text";
+    setHighlightMode(newMode);
+    setSelectedDefaultTextId(null); // Clear default text selection
+    scheduleUpdate(); // Force update after mode change
+  }, [highlightMode, scheduleUpdate]);
+
+  // Toggle ICT code highlights
+  const toggleICTCodes = useCallback(() => {
+    const newMode = highlightMode === "ict-code" ? "none" : "ict-code";
+    setHighlightMode(newMode);
+    setSelectedDefaultTextId(null); // Clear default text selection
+    scheduleUpdate(); // Force update after mode change
+  }, [highlightMode, scheduleUpdate]);
+
+  // Toggle codes highlights
+  const toggleCodes = useCallback(() => {
+    const newMode = highlightMode === "codes" ? "none" : "codes";
+    setHighlightMode(newMode);
+    setSelectedDefaultTextId(null); // Clear default text selection
+    scheduleUpdate(); // Force update after mode change
+  }, [highlightMode, scheduleUpdate]);
+
+  // Handle default text tap - show only that text highlighted
+  const handleDefaultTextTap = useCallback((textId: string) => {
+    if (selectedDefaultTextId === textId && highlightMode === "default-text") {
+      // If same text is tapped again, clear highlights
+      setHighlightMode("none");
+      setSelectedDefaultTextId(null);
+    } else {
+      // Show only this text highlighted
+      setHighlightMode("default-text");
+      setSelectedDefaultTextId(textId);
+    }
+    scheduleUpdate(); // Force update after mode change
+  }, [selectedDefaultTextId, highlightMode, scheduleUpdate]);
+
+  // Clear all highlights
+  const clearAllHighlights = useCallback(() => {
+    setHighlightMode("none");
+    setSelectedDefaultTextId(null);
+    scheduleUpdate(); // Force update after clearing
+  }, [scheduleUpdate]);
+
+  // Get available ICT codes (those found in PDF)
+  const availableICTCodes = useMemo(() => {
+    return ictCodes.filter(code => code.position);
+  }, [ictCodes]);
+
+  // Get unavailable ICT codes (those not found in PDF)
+  const unavailableICTCodes = useMemo(() => {
+    return ictCodes.filter(code => !code.position);
+  }, [ictCodes]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Force update when highlights change to ensure visibility
+  useEffect(() => {
+    if (currentHighlights.length > 0) {
+      scheduleUpdate();
+    }
+  }, [currentHighlights.length, scheduleUpdate]);
+
+  return {
+    // Current state
+    highlightMode,
+    currentHighlights,
+    selectedDefaultTextId,
+    
+    // Data
+    extractedTexts,
+    ictCodes,
+    codes,
+    defaultTexts,
+    availableICTCodes,
+    unavailableICTCodes,
+    
+    // Actions
+    toggleExtractedText,
+    toggleICTCodes,
+    toggleCodes,
+    handleDefaultTextTap,
+    clearAllHighlights,
+    triggerUpdate, // Expose for manual updates
+    
+    // Computed states
+    isExtractedTextActive: highlightMode === "extracted-text",
+    isICTCodesActive: highlightMode === "ict-code",
+    isCodesActive: highlightMode === "codes",
+    isDefaultTextActive: highlightMode === "default-text",
+    hasExtractedTexts: extractedTexts.length > 0,
+    hasAvailableICTCodes: availableICTCodes.length > 0,
+    hasCodes: codes.length > 0,
+  };
+};

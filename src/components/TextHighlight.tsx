@@ -53,6 +53,11 @@ export interface TextHighlightProps {
    * Optional CSS styling applied to each TextHighlight part.
    */
   style?: CSSProperties;
+
+  /**
+   * Whether to show category colors for this highlight.
+   */
+  showCategoryColor?: boolean;
 }
 
 /**
@@ -68,8 +73,17 @@ export const TextHighlight = ({
   isScrolledTo,
   onContextMenu,
   style,
+  showCategoryColor = false,
 }: TextHighlightProps) => {
-  const highlightClass = isScrolledTo ? "TextHighlight--scrolledTo" : "";
+
+  const scrolledToClass = isScrolledTo ? "TextHighlight--scrolledTo" : "";
+  // Only show category class when showCategoryColor is true or is pending multi-selection
+  const isPending = highlight.id.startsWith('temp-');
+  const categoryClass = (highlight.category && (showCategoryColor || isPending)) ? `TextHighlight--${highlight.category}` : "";
+  const pendingClass = isPending ? "TextHighlight--pending" : "";
+  // Add subType class for text+code category styling
+  const subTypeClass = (highlight.category === "text+code" && highlight.subType) ? `TextHighlight--${highlight.subType}` : "";
+  const highlightClass = `${scrolledToClass} ${categoryClass} ${subTypeClass} ${pendingClass}`.trim();
   const { rects } = highlight.position;
 
   return (

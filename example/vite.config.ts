@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import reactRefresh from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: "/react-pdf-highlighter-extended/example-app/",
+  base: process.env.NODE_ENV === "production" ? "/react-pdf-highlighter-extended/example-app/" : "/",
   build: {
     target: "esnext",
     outDir: "example-app",

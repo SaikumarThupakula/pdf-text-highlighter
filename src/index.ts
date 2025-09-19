@@ -10,6 +10,14 @@ import {
 import { AreaHighlight, AreaHighlightProps } from "./components/AreaHighlight";
 import { PdfLoader, PdfLoaderProps } from "./components/PdfLoader";
 import {
+  CategorizedTextHighlight,
+  CategorizedTextHighlightProps,
+} from "./components/CategorizedTextHighlight";
+import {
+  CategorizedHighlightContainer,
+  CategorizedHighlightContainerProps,
+} from "./components/CategorizedHighlightContainer";
+import {
   HighlightContainerUtils,
   useHighlightContainerContext,
 } from "./contexts/HighlightContext";
@@ -17,6 +25,15 @@ import {
   viewportPositionToScaled,
   scaledPositionToViewport,
 } from "./lib/coordinates";
+import {
+  getHighlightColors,
+  getHighlightStyle,
+  HIGHLIGHT_COLORS,
+} from "./lib/highlight-colors";
+import { useToggleHighlighting } from "./hooks/useToggleHighlighting";
+import { useHighlightNavigation } from "./hooks/useHighlightNavigation";
+import { HighlightNavigationControls } from "./components/HighlightNavigationControls";
+import { NavigableHighlightSidebar } from "./components/NavigableHighlightSidebar";
 
 import {
   PdfHighlighterUtils,
@@ -29,10 +46,19 @@ export {
   TextHighlight,
   MonitoredHighlightContainer,
   AreaHighlight,
+  CategorizedTextHighlight,
+  CategorizedHighlightContainer,
+  HighlightNavigationControls,
+  NavigableHighlightSidebar,
   useHighlightContainerContext,
   viewportPositionToScaled,
   scaledPositionToViewport,
   usePdfHighlighterContext,
+  getHighlightColors,
+  getHighlightStyle,
+  HIGHLIGHT_COLORS,
+  useToggleHighlighting,
+  useHighlightNavigation,
 };
 
 export type {
@@ -43,5 +69,7 @@ export type {
   MonitoredHighlightContainerProps,
   AreaHighlightProps,
   PdfLoaderProps,
+  CategorizedTextHighlightProps,
+  CategorizedHighlightContainerProps,
 };
 export * from "./types";

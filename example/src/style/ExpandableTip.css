@@ -6,6 +6,11 @@
   padding: 8px 16px;
   border-radius: 4px;
   font-size: larger;
+  transition: background-color 0.3s;
+}
+
+.Tip__compact:hover {
+  background-color: #1565c0;
 }
 
 .Tip__card {
@@ -40,4 +45,29 @@
 .Tip__card input[type="submit"]:hover {
   background-color: #1565c0;
   border-color: #1565c0;
+}
+
+.Tip__expanded {
+  padding: 10px;
+}
+
+.Tip__category-selector {
+  margin-bottom: 10px;
+}
+
+.Tip__category-selector label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.Tip__category-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  color: #333;
 }

@@ -53,6 +53,11 @@ export interface AreaHighlightProps {
    * Custom styling to be applied to the {@link AreaHighlight} component.
    */
   style?: CSSProperties;
+
+  /**
+   * Whether to show category colors for this highlight.
+   */
+  showCategoryColor?: boolean;
 }
 
 /**
@@ -68,8 +73,16 @@ export const AreaHighlight = ({
   onContextMenu,
   onEditStart,
   style,
+  showCategoryColor = false,
 }: AreaHighlightProps) => {
-  const highlightClass = isScrolledTo ? "AreaHighlight--scrolledTo" : "";
+
+  const scrolledToClass = isScrolledTo ? "AreaHighlight--scrolledTo" : "";
+  // Only show category class when showCategoryColor is true or is pending multi-selection
+  const isPending = highlight.id.startsWith('temp-');
+  const categoryClass = (highlight.category && (showCategoryColor || isPending)) ? `AreaHighlight--${highlight.category}` : "";
+  // Add subType class for text+code category styling
+  const subTypeClass = (highlight.category === "text+code" && highlight.subType) ? `AreaHighlight--${highlight.subType}` : "";
+  const highlightClass = `${scrolledToClass} ${categoryClass} ${subTypeClass}`.trim();
 
   // Generate key based on position. This forces a remount (and a defaultpos update)
   // whenever highlight position changes (e.g., when updated, scale changes, etc.)

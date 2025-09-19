@@ -9,10 +9,208 @@
 .TextHighlight__part {
   cursor: pointer;
   position: absolute;
-  background: rgba(255, 226, 143, 1);
+  background: rgba(255, 226, 143, 0.3); /* Default yellow highlight for test highlights */
+  border-radius: 3px;
   transition: background 0.3s;
+}
+
+.TextHighlight__part:hover {
+  background: rgba(255, 226, 143, 0.5); /* Darker yellow on hover */
+}
+
+.TextHighlight--extracted-text .TextHighlight__part {
+  background: rgba(255, 0, 0, 0.3);
+}
+
+.TextHighlight--extracted-text .TextHighlight__part:hover {
+  background: rgba(255, 0, 0, 0.5);
+}
+
+.TextHighlight--ict-code .TextHighlight__part {
+  background: rgba(0, 123, 255, 0.3);
+}
+
+.TextHighlight--ict-code .TextHighlight__part:hover {
+  background: rgba(0, 123, 255, 0.5);
+}
+
+.TextHighlight--extracted-code .TextHighlight__part {
+  background: rgba(0, 102, 204, 0.3);
+}
+
+.TextHighlight--extracted-code .TextHighlight__part:hover {
+  background: rgba(0, 102, 204, 0.5);
+}
+
+.TextHighlight--text\+code .TextHighlight__part {
+  background: rgba(128, 128, 128, 0.3); /* Default text+code gray */
+}
+
+.TextHighlight--text\+code .TextHighlight__part:hover {
+  background: rgba(128, 128, 128, 0.5);
+}
+
+/* Text+code group subType-specific colors */
+.TextHighlight--text\+code.TextHighlight--content .TextHighlight__part {
+  background: rgba(255, 0, 0, 0.3); /* Red for content */
+}
+
+.TextHighlight--text\+code.TextHighlight--content .TextHighlight__part:hover {
+  background: rgba(255, 0, 0, 0.5);
+}
+
+.TextHighlight--text\+code.TextHighlight--implementation .TextHighlight__part {
+  background: rgba(0, 102, 204, 0.3); /* Blue for implementation */
+}
+
+.TextHighlight--text\+code.TextHighlight--implementation .TextHighlight__part:hover {
+  background: rgba(0, 102, 204, 0.5);
+}
+
+.TextHighlight--pending .TextHighlight__part {
+  border: 2px dashed rgba(255, 255, 255, 0.8) !important;
+  box-sizing: border-box;
+}
+
+.TextHighlight--pending.TextHighlight--extracted-text .TextHighlight__part {
+  background: rgba(255, 0, 0, 0.6) !important;
+  border-color: rgba(255, 0, 0, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--ict-code .TextHighlight__part {
+  background: rgba(0, 123, 255, 0.6) !important;
+  border-color: rgba(0, 123, 255, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--extracted-code .TextHighlight__part {
+  background: rgba(0, 102, 204, 0.6) !important;
+  border-color: rgba(0, 102, 204, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--text\+code .TextHighlight__part {
+  background: rgba(128, 128, 128, 0.6) !important;
+  border-color: rgba(128, 128, 128, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--text\+code.TextHighlight--content .TextHighlight__part {
+  background: rgba(255, 0, 0, 0.6) !important;
+  border-color: rgba(255, 0, 0, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--text\+code.TextHighlight--implementation .TextHighlight__part {
+  background: rgba(0, 102, 204, 0.6) !important;
+  border-color: rgba(0, 102, 204, 0.8) !important;
 }
 
 .TextHighlight--scrolledTo .TextHighlight__part {
   background: #ff4141;
+}
+
+/* Category-specific scrolledTo colors */
+.TextHighlight--scrolledTo.TextHighlight--extracted-text .TextHighlight__part {
+  background: #ff4141;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--ict-code .TextHighlight__part {
+  background: #0066cc;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--extracted-code .TextHighlight__part {
+  background: #004499;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--text\+code .TextHighlight__part {
+  background: #808080;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--text\+code.TextHighlight--content .TextHighlight__part {
+  background: #ff0000;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--text\+code.TextHighlight--implementation .TextHighlight__part {
+  background: #0066cc;
+}
+
+/* Additional highlight categories */
+.TextHighlight--important .TextHighlight__part {
+  background: rgba(255, 193, 7, 0.3); /* Amber */
+}
+
+.TextHighlight--important .TextHighlight__part:hover {
+  background: rgba(255, 193, 7, 0.5);
+}
+
+.TextHighlight--todo .TextHighlight__part {
+  background: rgba(156, 39, 176, 0.3); /* Purple */
+}
+
+.TextHighlight--todo .TextHighlight__part:hover {
+  background: rgba(156, 39, 176, 0.5);
+}
+
+.TextHighlight--note .TextHighlight__part {
+  background: rgba(76, 175, 80, 0.3); /* Green */
+}
+
+.TextHighlight--note .TextHighlight__part:hover {
+  background: rgba(76, 175, 80, 0.5);
+}
+
+.TextHighlight--question .TextHighlight__part {
+  background: rgba(233, 30, 99, 0.3); /* Pink */
+}
+
+.TextHighlight--question .TextHighlight__part:hover {
+  background: rgba(233, 30, 99, 0.5);
+}
+
+/* Pending states for new categories */
+.TextHighlight--pending.TextHighlight--important .TextHighlight__part {
+  background: rgba(255, 193, 7, 0.6) !important;
+  border-color: rgba(255, 193, 7, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--todo .TextHighlight__part {
+  background: rgba(156, 39, 176, 0.6) !important;
+  border-color: rgba(156, 39, 176, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--note .TextHighlight__part {
+  background: rgba(76, 175, 80, 0.6) !important;
+  border-color: rgba(76, 175, 80, 0.8) !important;
+}
+
+.TextHighlight--pending.TextHighlight--question .TextHighlight__part {
+  background: rgba(233, 30, 99, 0.6) !important;
+  border-color: rgba(233, 30, 99, 0.8) !important;
+}
+
+/* ScrolledTo states for new categories */
+.TextHighlight--scrolledTo.TextHighlight--important .TextHighlight__part {
+  background: #ffc107;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--todo .TextHighlight__part {
+  background: #9c27b0;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--note .TextHighlight__part {
+  background: #4caf50;
+}
+
+.TextHighlight--scrolledTo.TextHighlight--question .TextHighlight__part {
+  background: #e91e63;
+}
+
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 16px rgba(255, 65, 65, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(255, 65, 65, 0.6);
+  }
+  100% {
+    box-shadow: 0 4px 16px rgba(255, 65, 65, 0.4);
+  }
 }

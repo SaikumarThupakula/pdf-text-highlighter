@@ -90,6 +90,13 @@ export type Content = {
 export type HighlightType = "text" | "area";
 
 /**
+ * Categories for different types of highlights with specific styling.
+ *
+ * @category Type
+ */
+export type HighlightCategory = "extracted-text" | "extracted-code" | "text+code" | "ict-code" | "codes";
+
+/**
  * This represents a selected (text/mouse) area that has been turned into a
  * highlight. If you are storing highlights, they should be stored as this type.
  *
@@ -101,6 +108,18 @@ export interface Highlight {
    * This property is planned to be non-optional in future.
    */
   type?: HighlightType;
+  /**
+   * Category of the highlight for applying specific styling.
+   */
+  category?: HighlightCategory;
+  /**
+   * Sub-type for highlights within text+code groups to distinguish between content types.
+   */
+  subType?: "content" | "implementation";
+  /**
+   * Multiple categories for dual-purpose highlighting (e.g., text that contains both extracted text and ICT codes).
+   */
+  categories?: HighlightCategory[];
   /**
    * @deprecated If you want your highlight to store content after being a
    * GhostHighlight, you should create your own interface extended off this. If
@@ -117,8 +136,9 @@ export interface Highlight {
  *
  * @category Type
  */
-export interface GhostHighlight extends Required<Omit<Highlight, "id">> {
+export interface GhostHighlight extends Omit<Highlight, "id"> {
   content: Content;
+  type: HighlightType;
 }
 
 /**

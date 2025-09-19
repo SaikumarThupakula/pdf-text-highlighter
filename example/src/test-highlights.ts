@@ -38,7 +38,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
           },
         ],
       },
-      comment: "Better code!",
+      // comment: "Better code!",
       id: "32604966305545835",
     },
     {
@@ -59,7 +59,7 @@ export const testHighlights: Record<string, Array<CommentedHighlight>> = {
         },
         rects: [],
       },
-      comment: "JavaScript",
+      // comment: "JavaScript",
       id: "9850481941481022",
     },
     {
