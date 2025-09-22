@@ -14,12 +14,24 @@
   transition: background 0.3s;
 }
 
+.TextHighlight__part--rectangular {
+  border: 1px solid rgba(255, 226, 143, 0.6);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin: -6px -3px;
+  padding: 3px 6px;
+}
+
 .TextHighlight__part:hover {
   background: rgba(255, 226, 143, 0.5); /* Darker yellow on hover */
 }
 
 .TextHighlight--extracted-text .TextHighlight__part {
   background: rgba(255, 0, 0, 0.3);
+}
+
+.TextHighlight--extracted-text .TextHighlight__part--rectangular {
+  border-color: rgba(255, 0, 0, 0.6);
 }
 
 .TextHighlight--extracted-text .TextHighlight__part:hover {
@@ -30,6 +42,10 @@
   background: rgba(0, 123, 255, 0.3);
 }
 
+.TextHighlight--ict-code .TextHighlight__part--rectangular {
+  border-color: rgba(0, 123, 255, 0.6);
+}
+
 .TextHighlight--ict-code .TextHighlight__part:hover {
   background: rgba(0, 123, 255, 0.5);
 }
@@ -38,12 +54,20 @@
   background: rgba(0, 102, 204, 0.3);
 }
 
+.TextHighlight--extracted-code .TextHighlight__part--rectangular {
+  border-color: rgba(0, 102, 204, 0.6);
+}
+
 .TextHighlight--extracted-code .TextHighlight__part:hover {
   background: rgba(0, 102, 204, 0.5);
 }
 
 .TextHighlight--text\+code .TextHighlight__part {
   background: rgba(128, 128, 128, 0.3); /* Default text+code gray */
+}
+
+.TextHighlight--text\+code .TextHighlight__part--rectangular {
+  border-color: rgba(128, 128, 128, 0.6);
 }
 
 .TextHighlight--text\+code .TextHighlight__part:hover {
@@ -136,12 +160,20 @@
   background: rgba(255, 193, 7, 0.3); /* Amber */
 }
 
+.TextHighlight--important .TextHighlight__part--rectangular {
+  border-color: rgba(255, 193, 7, 0.6);
+}
+
 .TextHighlight--important .TextHighlight__part:hover {
   background: rgba(255, 193, 7, 0.5);
 }
 
 .TextHighlight--todo .TextHighlight__part {
   background: rgba(156, 39, 176, 0.3); /* Purple */
+}
+
+.TextHighlight--todo .TextHighlight__part--rectangular {
+  border-color: rgba(156, 39, 176, 0.6);
 }
 
 .TextHighlight--todo .TextHighlight__part:hover {
@@ -152,12 +184,20 @@
   background: rgba(76, 175, 80, 0.3); /* Green */
 }
 
+.TextHighlight--note .TextHighlight__part--rectangular {
+  border-color: rgba(76, 175, 80, 0.6);
+}
+
 .TextHighlight--note .TextHighlight__part:hover {
   background: rgba(76, 175, 80, 0.5);
 }
 
 .TextHighlight--question .TextHighlight__part {
   background: rgba(233, 30, 99, 0.3); /* Pink */
+}
+
+.TextHighlight--question .TextHighlight__part--rectangular {
+  border-color: rgba(233, 30, 99, 0.6);
 }
 
 .TextHighlight--question .TextHighlight__part:hover {

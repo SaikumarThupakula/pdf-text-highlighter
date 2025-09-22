@@ -6,6 +6,7 @@ import "../style/MouseSelection.css";
 import { PDFViewer } from "pdfjs-dist/types/web/pdf_viewer";
 import { viewportPositionToScaled } from "../lib/coordinates";
 import screenshot from "../lib/screenshot";
+import { extractTextFromSelection, extractTextFromMultipleRects } from "../lib/text-extraction";
 import type { LTWH, LTWHP, ScaledPosition, ViewportPosition } from "../types";
 
 type Coords = {
@@ -55,6 +56,7 @@ export interface MouseSelectionProps {
    * @param viewportPosition - viewport position of the mouse selection.
    * @param scaledPosition - scaled position of the mouse selection.
    * @param image - PNG screenshot of the mouse selection.
+   * @param text - extracted text content from the mouse selection.
    * @param resetSelection - Callback to reset the current selection.
    * @param event - Mouse event associated with ending the selection.
    */
@@ -62,6 +64,7 @@ export interface MouseSelectionProps {
     viewportPosition: ViewportPosition,
     scaledPosition: ScaledPosition,
     image: string,
+    text: string,
     resetSelection: () => void,
     event: MouseEvent,
   ): void;
@@ -141,7 +144,7 @@ export const MouseSelection = ({
     // Should be the PdfHighlighter
     const container = asElement(rootRef.current.parentElement);
 
-    const handleMouseUp = (event: MouseEvent) => {
+    const handleMouseUp = async (event: MouseEvent) => {
       if (!start || !end || !startTargetRef.current) return;
 
       const boundingRect = getBoundingRect(start, end);
@@ -157,31 +160,116 @@ export const MouseSelection = ({
 
       setLocked(true);
 
-      const page = getPageFromElement(startTargetRef.current);
-      if (!page) return;
+      // Get start and end pages for multi-page selection support
+      const startPage = getPageFromElement(startTargetRef.current);
+      if (!startPage) return;
 
-      const pageBoundingRect: LTWHP = {
-        ...boundingRect,
-        top: boundingRect.top - page.node.offsetTop,
-        left: boundingRect.left - page.node.offsetLeft,
-        pageNumber: page.number,
-      };
-
-      const viewportPosition: ViewportPosition = {
-        boundingRect: pageBoundingRect,
-        rects: [],
-      };
-
-      const scaledPosition = viewportPositionToScaled(viewportPosition, viewer);
-
-      const image = screenshot(
-        pageBoundingRect,
-        pageBoundingRect.pageNumber,
-        viewer,
+      // Find end page by checking which page contains the end coordinates
+      let endPage = startPage;
+      const endElement = document.elementFromPoint(
+        end.x + container.getBoundingClientRect().left,
+        end.y + container.getBoundingClientRect().top
       );
 
-      onSelection &&
-        onSelection(viewportPosition, scaledPosition, image, reset, event);
+      if (endElement && isHTMLElement(endElement)) {
+        const endPageFound = getPageFromElement(asElement(endElement));
+        if (endPageFound) {
+          endPage = endPageFound;
+        }
+      }
+
+      // Handle multi-page selection
+      if (startPage.number !== endPage.number) {
+        // Create rects for each page in the selection
+        const rects: LTWHP[] = [];
+
+        for (let pageNum = startPage.number; pageNum <= endPage.number; pageNum++) {
+          const pageElement = container.querySelector(`[data-page-number="${pageNum}"]`) ||
+                             container.querySelector(`.page:nth-child(${pageNum})`);
+
+          if (!pageElement) continue;
+
+
+          let pageTop, pageBottom, pageLeft, pageRight;
+
+          if (pageNum === startPage.number) {
+            // First page: from start point to bottom of page
+            pageTop = Math.max(0, start.y - (pageElement as HTMLElement).offsetTop);
+            pageBottom = (pageElement as HTMLElement).clientHeight;
+            pageLeft = Math.max(0, start.x - (pageElement as HTMLElement).offsetLeft);
+            pageRight = (pageElement as HTMLElement).clientWidth;
+          } else if (pageNum === endPage.number) {
+            // Last page: from top of page to end point
+            pageTop = 0;
+            pageBottom = Math.min((pageElement as HTMLElement).clientHeight, end.y - (pageElement as HTMLElement).offsetTop);
+            pageLeft = 0;
+            pageRight = Math.min((pageElement as HTMLElement).clientWidth, end.x - (pageElement as HTMLElement).offsetLeft);
+          } else {
+            // Middle pages: full page width and height
+            pageTop = 0;
+            pageBottom = (pageElement as HTMLElement).clientHeight;
+            pageLeft = 0;
+            pageRight = (pageElement as HTMLElement).clientWidth;
+          }
+
+          if (pageBottom > pageTop && pageRight > pageLeft) {
+            rects.push({
+              top: pageTop,
+              left: pageLeft,
+              width: pageRight - pageLeft,
+              height: pageBottom - pageTop,
+              pageNumber: pageNum,
+            });
+          }
+        }
+
+        const firstRect = rects[0];
+        const viewportPosition: ViewportPosition = {
+          boundingRect: firstRect,
+          rects: rects,
+        };
+
+        const scaledPosition = viewportPositionToScaled(viewportPosition, viewer);
+
+        const image = screenshot(
+          firstRect,
+          firstRect.pageNumber,
+          viewer,
+        );
+
+        // Extract text from multi-page selection
+        const extractedText = await extractTextFromMultipleRects(rects, viewer);
+
+        onSelection &&
+          onSelection(viewportPosition, scaledPosition, image, extractedText, reset, event);
+      } else {
+        // Single page selection (original logic)
+        const pageBoundingRect: LTWHP = {
+          ...boundingRect,
+          top: boundingRect.top - startPage.node.offsetTop,
+          left: boundingRect.left - startPage.node.offsetLeft,
+          pageNumber: startPage.number,
+        };
+
+        const viewportPosition: ViewportPosition = {
+          boundingRect: pageBoundingRect,
+          rects: [pageBoundingRect],
+        };
+
+        const scaledPosition = viewportPositionToScaled(viewportPosition, viewer);
+
+        const image = screenshot(
+          pageBoundingRect,
+          pageBoundingRect.pageNumber,
+          viewer,
+        );
+
+        // Extract text from single page selection
+        const extractedText = await extractTextFromSelection(viewportPosition, viewer);
+
+        onSelection &&
+          onSelection(viewportPosition, scaledPosition, image, extractedText, reset, event);
+      }
     };
 
     const handleMouseMove = (event: MouseEvent) => {

@@ -27,6 +27,7 @@ export interface TextHighlightProps {
    *
    * @param event - Mouse event associated with movement.
    */
+
   onMouseOver?(event: MouseEvent<HTMLDivElement>): void;
 
   /**
@@ -75,16 +76,25 @@ export const TextHighlight = ({
   style,
   showCategoryColor = false,
 }: TextHighlightProps) => {
-
   const scrolledToClass = isScrolledTo ? "TextHighlight--scrolledTo" : "";
   // Only show category class when showCategoryColor is true or is pending multi-selection
-  const isPending = highlight.id.startsWith('temp-');
-  const categoryClass = (highlight.category && (showCategoryColor || isPending)) ? `TextHighlight--${highlight.category}` : "";
+  const isPending = highlight.id.startsWith("temp-");
+  const categoryClass =
+    highlight.category && (showCategoryColor || isPending)
+      ? `TextHighlight--${highlight.category}`
+      : "";
   const pendingClass = isPending ? "TextHighlight--pending" : "";
   // Add subType class for text+code category styling
-  const subTypeClass = (highlight.category === "text+code" && highlight.subType) ? `TextHighlight--${highlight.subType}` : "";
-  const highlightClass = `${scrolledToClass} ${categoryClass} ${subTypeClass} ${pendingClass}`.trim();
-  const { rects } = highlight.position;
+  const subTypeClass =
+    highlight.category === "text+code" && highlight.subType
+      ? `TextHighlight--${highlight.subType}`
+      : "";
+  const highlightClass =
+    `${scrolledToClass} ${categoryClass} ${subTypeClass} ${pendingClass}`.trim();
+  const { boundingRect } = highlight.position;
+
+  // Always use rectangular rendering - render bounding rectangle only
+  // This ensures all highlights (including old line-by-line ones) appear as rectangular boxes
 
   return (
     <div
@@ -92,16 +102,14 @@ export const TextHighlight = ({
       onContextMenu={onContextMenu}
     >
       <div className="TextHighlight__parts">
-        {rects.map((rect, index) => (
-          <div
-            onMouseOver={onMouseOver}
-            onMouseOut={onMouseOut}
-            onClick={onClick}
-            key={index}
-            style={{ ...rect, ...style }}
-            className={`TextHighlight__part`}
-          />
-        ))}
+        {/* Always use bounding rectangle for rectangular highlighting */}
+        <div
+          onMouseOver={onMouseOver}
+          onMouseOut={onMouseOut}
+          onClick={onClick}
+          style={{ ...boundingRect, ...style }}
+          className={`TextHighlight__part TextHighlight__part--rectangular`}
+        />
       </div>
     </div>
   );

@@ -1,9 +1,8 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import CommentForm from "./CommentForm";
 import ContextMenu, { ContextMenuProps } from "./ContextMenu";
 import ExpandableTip from "./ExpandableTip";
 import HighlightContainer from "./HighlightContainer";
-import PdfUploader from "./PdfUploader";
 import { SearchBar, type SearchResult } from "./SearchBar";
 import { SearchService } from "./SearchService";
 import Sidebar from "./Sidebar";
@@ -55,7 +54,7 @@ const App = () => {
 
   // Upload-related state
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadedFileData, setUploadedFileData] = useState<ArrayBuffer | null>(
+  const [uploadedFileData, setUploadedFileData] = useState<Uint8Array | null>(
     null
   );
   const [isUsingUploadedPdf, setIsUsingUploadedPdf] = useState(false);
@@ -76,7 +75,6 @@ const App = () => {
   const [activeCategoryHighlight, setActiveCategoryHighlight] = useState<
     "extracted-text" | "extracted-code" | "text+code" | "ict-code" | null
   >(null);
-
 
   // Navigation state for categories
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState<{
@@ -152,6 +150,16 @@ const App = () => {
     resetHash();
   };
 
+  // Validate uploaded file data
+  const isValidUploadData = (data: Uint8Array | null): boolean => {
+    try {
+      return data !== null && data.byteLength > 0 && data.buffer !== null;
+    } catch (error) {
+      console.error("Invalid upload data:", error);
+      return false;
+    }
+  };
+
   // Handle PDF upload
   const handlePdfUpload = (file: File) => {
     setUploadedFile(file);
@@ -160,13 +168,31 @@ const App = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       if (e.target?.result instanceof ArrayBuffer) {
-        setUploadedFileData(e.target.result);
-        setIsUsingUploadedPdf(true);
-        setHighlights([]);
-        handleClearSearch(); // Clear search results
-        resetHash(); // Clear any hash
-        setPdfScaleValue(undefined); // Reset scale for new PDF
+        try {
+          // Create a defensive copy to prevent ArrayBuffer detachment
+          const arrayBuffer = e.target.result;
+          const uint8Array = new Uint8Array(arrayBuffer.byteLength);
+          uint8Array.set(new Uint8Array(arrayBuffer));
+
+          setUploadedFileData(uint8Array);
+          setIsUsingUploadedPdf(true);
+          setHighlights([]);
+          handleClearSearch(); // Clear search results
+          resetHash(); // Clear any hash
+          setPdfScaleValue(undefined); // Reset scale for new PDF
+        } catch (error) {
+          console.error("Error processing uploaded PDF:", error);
+          alert("Error processing the uploaded PDF file. Please try again.");
+          // Reset to default state on error
+          setUploadedFileData(null);
+          setIsUsingUploadedPdf(false);
+        }
       }
+    };
+
+    reader.onerror = () => {
+      console.error("Error reading file");
+      alert("Error reading the file. Please try again.");
     };
     reader.readAsArrayBuffer(file);
   };
@@ -409,15 +435,30 @@ const App = () => {
           isSearching={isSearching}
         />
         {(() => {
-          const document =
-            isUsingUploadedPdf && uploadedFileData
-              ? new Uint8Array(uploadedFileData)
-              : url;
+          // Use useMemo to stabilize document reference and prevent ArrayBuffer detachment
+          const document = useMemo(() => {
+            try {
+              if (isUsingUploadedPdf && isValidUploadData(uploadedFileData)) {
+                return uploadedFileData;
+              }
+              if (isUsingUploadedPdf && !isValidUploadData(uploadedFileData)) {
+                console.warn("Upload data is invalid, falling back to URL");
+                // Reset upload state if data is invalid
+                setIsUsingUploadedPdf(false);
+                setUploadedFileData(null);
+              }
+              return url;
+            } catch (error) {
+              console.error("Error accessing PDF document:", error);
+              return url; // Fallback to URL
+            }
+          }, [isUsingUploadedPdf, uploadedFileData, url]);
+
           return document ? (
             <PdfLoader document={document}>
               {(pdfDocument) => (
                 <PdfHighlighter
-                  enableAreaSelection={(event) => event.altKey}
+                  enableAreaSelection={() => true}
                   pdfDocument={pdfDocument}
                   onScrollAway={handleScrollAway}
                   utilsRef={(_pdfHighlighterUtils) => {

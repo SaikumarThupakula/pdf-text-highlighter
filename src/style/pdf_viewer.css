@@ -5,6 +5,10 @@
   opacity: 1;
   mix-blend-mode: multiply;
   display: flex;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
 .annotationLayer {
@@ -23,7 +27,8 @@ html
 }
 
 .textLayer ::selection {
-  mix-blend-mode: multiply;
+  background: transparent !important;
+  color: inherit !important;
 }
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {

@@ -4,6 +4,72 @@
   width: 100%;
   height: 100%;
   background-color: #333;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Make cursor crosshair everywhere */
+* {
+  cursor: crosshair !important;
+}
+
+/* Override for UI elements - pointer cursor */
+button,
+input[type="button"],
+input[type="submit"],
+select,
+select *,
+option,
+[role="button"],
+[role="menuitem"],
+[role="option"],
+[role="listbox"],
+[role="combobox"],
+.button,
+.btn,
+.dropdown,
+.dropdown *,
+.dropdown-menu,
+.dropdown-menu *,
+.dropdown-item,
+.dropdown-option,
+.select,
+.select *,
+.menu,
+.menu *,
+.menuitem,
+a,
+[onclick],
+.test-highlights,
+.test-highlights *,
+.extracted-text,
+.extracted-text *,
+.extracted-code,
+.extracted-code *,
+.mixed-group,
+.mixed-group *,
+.sidebar,
+.sidebar *,
+[class*="sidebar"],
+[class*="sidebar"] *,
+[class*="highlight"],
+[class*="highlight"] *,
+[class*="extract"],
+[class*="extract"] *,
+[class*="group"],
+[class*="group"] * {
+  cursor: pointer !important;
+}
+
+/* Text cursor for text inputs */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+textarea {
+  cursor: text !important;
 }
 
 /* Style the scrollbar */
@@ -38,4 +104,26 @@
 .PdfHighlighter--disable-selection {
   user-select: none;
   pointer-events: none;
+}
+
+/* Completely disable text selection highlighting */
+.PdfHighlighter *::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.PdfHighlighter *::-moz-selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Disable selection on all PDF content */
+.PdfHighlighter .textLayer,
+.PdfHighlighter .textLayer *,
+.PdfHighlighter .page,
+.PdfHighlighter .page * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }

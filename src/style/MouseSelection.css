@@ -1,15 +1,43 @@
 .MouseSelection {
   position: absolute;
-  border: 1px dashed #333;
-  background: rgba(153,193,218,255);
-  mix-blend-mode: multiply;
+  /* Beautiful blue selection styling */
+  border: 2px solid rgba(37, 99, 235, 0.8);
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+  transition: none;
+  animation: none;
 }
+
+/* Clean selection - no corner indicators or animations for beautiful appearance */
+.MouseSelection::before,
+.MouseSelection::after {
+  display: none;
+}
+
+
 /* Internet Explorer support method */
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  .MouseSelection {opacity: 0.5 }
+  .MouseSelection {
+    opacity: 0.5;
+    animation: none;
+    backdrop-filter: none;
+  }
+  .MouseSelection::before,
+  .MouseSelection::after {
+    display: none;
+  }
 }
 
 /* Microsoft Edge Browser 12+ (All) - @supports method */
 @supports (-ms-ime-align:auto) {
-  .MouseSelection {opacity: 0.5 }
+  .MouseSelection {
+    opacity: 0.5;
+    animation: none;
+    backdrop-filter: none;
+  }
+  .MouseSelection::before,
+  .MouseSelection::after {
+    display: none;
+  }
 }

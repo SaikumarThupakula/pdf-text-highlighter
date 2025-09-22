@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useHighlightContainerContext } from "../contexts/HighlightContext";
 import { CategorizedTextHighlight } from "./CategorizedTextHighlight";
 import { AreaHighlight } from "./AreaHighlight";
-import type { Highlight, HighlightCategory } from "../types";
+import type { Highlight, HighlightCategory, ViewportHighlight } from "../types";
 
 /**
  * Props for the CategorizedHighlightContainer
@@ -11,7 +11,7 @@ export interface CategorizedHighlightContainerProps {
   /**
    * Callback when a highlight is clicked
    */
-  onHighlightClick?: (highlight: Highlight, category?: HighlightCategory) => void;
+  onHighlightClick?: (highlight: ViewportHighlight, category?: HighlightCategory) => void;
 }
 
 /**
@@ -27,7 +27,8 @@ export const CategorizedHighlightContainer = ({
   
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const isTextHighlight = !Boolean(highlight.content && highlight.content.image);
+  // Check if it's a text highlight (has text but no image, or old text-only highlights)
+  const isTextHighlight = Boolean(highlight.content && highlight.content.text && !highlight.content.image);
 
   const handleClick = () => {
     if (onHighlightClick) {
